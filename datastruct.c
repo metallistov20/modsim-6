@@ -35,9 +35,6 @@
 /* Data structure type definition */
 #include "datastruct.h"
 
-/* Port D definitions, prototypes */
-#include "port_d.h"
-
 /* Errcode definitions */
 #include "modsim.h"
 
@@ -60,21 +57,12 @@
 struct timeval starttimePROC;
 
 /* First time, will be subtracted in HAL */
-#if !defined(QUASIFLOAT) 
-	float fFIRST;
-#else
-	int iFIRST;
-#endif /* defined(QUASIFLOAT)  */
+float fFIRST;
 
 /* Attach 3 floats to tail of dynamic structure 'pTimepointType' */
 int _EnrollPoint(const char * caller, pTimepointType * ppThisPointChain, 
-#if !defined(QUASIFLOAT) 
 	float * pfltTm, float * pfltX, float * pfltY, 
-#else
-	pQuasiFloatType pqfltTm, pQuasiFloatType pqfltX, pQuasiFloatType pqfltY, 
-#endif /* !defined(QUASIFLOAT) */
 	char * pcMrq)
-
 {
 pTimepointType pChild, pTempPointChain;
 
@@ -86,19 +74,14 @@ pTimepointType pChild, pTempPointChain;
 		/* check if successful */
 		if (NULL == *ppThisPointChain)
 		{
-#if !defined(QUASIFLOAT)
+
 			printf("[%s] %s:%s : ERROR: can't allocate memory for first element. %f: [X(%f),Y(%f)]  \n",
 			__FILE__, caller, __func__,
 			*pfltTm, *pfltX, *pfltY);
-#else
-			printf("[%s] %s:%s : ERROR: can't allocate memory for first element. \n",
-			__FILE__, caller, __func__);
-#endif /* !defined(QUASIFLOAT) */
 
 			return P_ERROR_MEM;
 		}
 
-#if !defined(QUASIFLOAT)
 		(*ppThisPointChain)->fltXval = *pfltX;
 		(*ppThisPointChain)->fltYval = *pfltY;
 		(*ppThisPointChain)->fltAbsTime = *pfltTm;
@@ -110,22 +93,7 @@ pTimepointType pChild, pTempPointChain;
 		/* Making unsigned short (needed fror ADxx conv'r) form float */
 		(*ppThisPointChain)->ushRawXval = (*ppThisPointChain)->fltXval * CONV_CENTUM;
 		(*ppThisPointChain)->ushRawYval = (*ppThisPointChain)->fltYval * CONV_CENTUM;
-#else
-		memcpy(& ((*ppThisPointChain)->qfltXval), pqfltX, sizeof(QuasiFloatType) );
-		memcpy(& ((*ppThisPointChain)->qfltYval), pqfltY, sizeof(QuasiFloatType) );
-		memcpy(& ((*ppThisPointChain)->qfltAbsTime), pqfltTm, sizeof(QuasiFloatType) );
 
-		/* Remove parasitic values (mostly they're same by modul, and different by sign) */
-		if ( (*ppThisPointChain)->qfltXval.integer < 0) (*ppThisPointChain)->qfltXval.integer *= (-1);
-		if ( (*ppThisPointChain)->qfltYval.integer < 0) (*ppThisPointChain)->qfltYval.integer *= (-1);
-
-		/* Making unsigned short (needed fror ADxx conv'r) form integer and fraction parts */
-		(*ppThisPointChain)->ushRawXval = ( (*ppThisPointChain)->qfltXval.integer * FRACT_PWR +
-				(*ppThisPointChain)->qfltXval.fraction ) / FRACT_PWR_SB;
-
-		(*ppThisPointChain)->ushRawYval = ( (*ppThisPointChain)->qfltYval.integer * FRACT_PWR +
-				(*ppThisPointChain)->qfltYval.fraction ) / FRACT_PWR_SB;
-#endif /* !defined(QUASIFLOAT) */
 
 		/* Don't let the values to be higher than highest value allowed for converter */
 		(*ppThisPointChain)->ushRawXval = min(CONV_BASE, (*ppThisPointChain)->ushRawXval);
@@ -133,34 +101,19 @@ pTimepointType pChild, pTempPointChain;
 
 		(*ppThisPointChain)->pcMarquee = calloc (1, strlen (pcMrq) +1 );
 		strcpy( (*ppThisPointChain)->pcMarquee, pcMrq);
-#if defined(QUASIFLOAT) 
 
 		// TODO: rework
-		if ( 0 > (*ppThisPointChain)->qfltAbsTime.integer*FRACT_PWR )
-			iFIRST = (*ppThisPointChain)->qfltAbsTime.integer*FRACT_PWR - (*ppThisPointChain)->qfltAbsTime.fraction;
-		else
-			iFIRST = (*ppThisPointChain)->qfltAbsTime.integer*FRACT_PWR+ (*ppThisPointChain)->qfltAbsTime.fraction;
-#else
 		fFIRST = (*ppThisPointChain)->fltAbsTime;
-#endif /* defined(QUASIFLOAT)  */
+
 
 #if defined(DEBUG_DATA)
-#if !defined(QUASIFLOAT)
+
 		printf("[%s] %s:%s : FIRST <%f> <%f>[%d] <%f>[%d] <%s> \n", __FILE__, caller, __func__,
 			(*ppThisPointChain)->fltAbsTime,
 			(*ppThisPointChain)->fltXval, (*ppThisPointChain)->ushRawXval,
 			(*ppThisPointChain)->fltYval, (*ppThisPointChain)->ushRawYval,
 			(*ppThisPointChain)->pcMarquee
 		);
-#else
-		printf("[%s] %s:%s : FIRST <%d.%d> <%d.%d>[%d] <%d.%d>[%d] <%s> \n", __FILE__, caller, __func__,
-
-			(*ppThisPointChain)->qfltAbsTime.integer,(*ppThisPointChain)->qfltAbsTime.fraction,
-			(*ppThisPointChain)->qfltXval.integer,(*ppThisPointChain)->qfltXval.fraction, (*ppThisPointChain)->ushRawXval,
-			(*ppThisPointChain)->qfltYval.integer,(*ppThisPointChain)->qfltYval.fraction, (*ppThisPointChain)->ushRawYval,
-			(*ppThisPointChain)->pcMarquee
-		);
-#endif /* !defined(QUASIFLOAT) */
 #endif /* (DEBUG_DATA) */
 
 		/* No first el't */
@@ -175,19 +128,15 @@ pTimepointType pChild, pTempPointChain;
 
 		if (NULL == pTempPointChain)
 		{
-#if !defined(QUASIFLOAT)
+
 			printf("[%s] %s:%s : ERROR: can't allocate memory for next element. %f: [X(%f),Y(%f)]  \n", 
 			__FILE__, caller, __func__,
 			*pfltTm, *pfltX, *pfltY);
-#else
-			printf("[%s] %s:%s : ERROR: can't allocate memory for next element.\n", 
-			__FILE__, caller, __func__);
-#endif /* !defined(QUASIFLOAT) */
 
 			return P_ERROR_MEM;
 		}
 
-#if !defined(QUASIFLOAT)
+
 		pTempPointChain->fltXval = *pfltX;
 		pTempPointChain->fltYval = *pfltY;
 		pTempPointChain->fltAbsTime = *pfltTm;
@@ -199,22 +148,6 @@ pTimepointType pChild, pTempPointChain;
 		/* Making unsigned short (needed fror ADxx conv'r) form float */
 		pTempPointChain->ushRawXval = pTempPointChain->fltXval * CONV_CENTUM;
 		pTempPointChain->ushRawYval = pTempPointChain->fltYval * CONV_CENTUM;
-#else
-		memcpy(& ( pTempPointChain->qfltXval), 	pqfltX, sizeof(QuasiFloatType) );
-		memcpy(& ( pTempPointChain->qfltYval), 	pqfltY, sizeof(QuasiFloatType) );
-		memcpy(& ( pTempPointChain->qfltAbsTime), pqfltTm, sizeof(QuasiFloatType) );
-
-		/* Remove parasitic values (mostly they're same by modul, and different by sign) */
-		if ( pTempPointChain->qfltXval.integer < 0) pTempPointChain->qfltXval.integer *= (-1);
-		if ( pTempPointChain->qfltYval.integer < 0) pTempPointChain->qfltYval.integer *= (-1);
-
-		/* Making unsigned short (needed fror ADxx conv'r) form integer and fraction parts */
-		pTempPointChain->ushRawXval = ( pTempPointChain->qfltXval.integer * FRACT_PWR +
-				pTempPointChain->qfltXval.fraction ) / FRACT_PWR_SB;
-		
-		pTempPointChain->ushRawYval = ( pTempPointChain->qfltYval.integer * FRACT_PWR +
-				pTempPointChain->qfltYval.fraction ) / FRACT_PWR_SB;
-#endif /* !defined(QUASIFLOAT) */
 
 		/* Don't let the values to be higher than highest value allowed for converter */
 		pTempPointChain->ushRawXval = min(CONV_BASE, pTempPointChain->ushRawXval);
@@ -225,22 +158,12 @@ pTimepointType pChild, pTempPointChain;
 
 
 #if defined(DEBUG_DATA)
-#if !defined(QUASIFLOAT)
 		printf("[%s] %s:%s : NEXT <%f> <%f>[%d] <%f>[%d] <%s> \n", __FILE__, caller, __func__,
 			pTempPointChain->fltAbsTime,
 			pTempPointChain->fltXval, pTempPointChain->ushRawXval,
 			pTempPointChain->fltYval, pTempPointChain->ushRawYval,
 			pTempPointChain->pcMarquee
 		);
-#else
-		printf("[%s] %s:%s : NEXT <%d.%d> <%d.%06d>[%d] <%d.%06d>[%d]   <%s> \n", __FILE__, caller, __func__,
-
-			pTempPointChain->qfltAbsTime.integer,pTempPointChain->qfltAbsTime.fraction,
-			pTempPointChain->qfltXval.integer,pTempPointChain->qfltXval.fraction, pTempPointChain->ushRawXval,
-			pTempPointChain->qfltYval.integer,pTempPointChain->qfltYval.fraction, pTempPointChain->ushRawYval,		
-			pTempPointChain->pcMarquee
-		);
-#endif /* !defined(QUASIFLOAT) */
 #endif /* (DEBUG_DATA) */
 
 		/* Skip everything, except last entry */
@@ -267,7 +190,7 @@ pTimepointType pChild, pTempPointChain;
 int _ProcessPoints(const char * caller, pTimepointType pPointChainPar)
 {
 pTimepointType pPointChain = pPointChainPar;
-pTimepointType pPointChainRESERV__2DEL = pPointChainPar;}// TODO: _2_DEL . TESTING REALDATA CURVES on OSCILL. remove!
+pTimepointType pPointChainRESERV__2DEL = pPointChainPar;// TODO: _2_DEL . TESTING REALDATA CURVES on OSCILL. remove!
 float fltAbsTime;
 
 double timeusePROC;
@@ -275,28 +198,19 @@ double timeusePROC;
 	/* Take initial time. Current time values will be taken in 'ProcRealAndRel()' */
 	gettimeofday(&starttimePROC, 0);
 
-while(1) }// TODO: _2_DEL . TESTING REALDATA CURVES on OSCILL. remove!
-{pPointChain =  pPointChainRESERV__2DEL;}// TODO: _2_DEL . TESTING REALDATA CURVES on OSCILL. remove!
+while(1)// TODO: _2_DEL . TESTING REALDATA CURVES on OSCILL. remove!
+{pPointChain =  pPointChainRESERV__2DEL;// TODO: _2_DEL . TESTING REALDATA CURVES on OSCILL. remove!
 
 	/* Process each entry of chain */
 	while (NULL != pPointChain)
 	{
 #if DEBUG_DATA_
-#if !defined(QUASIFLOAT)
 		printf("[%s] %s:%s : <%f> <%f> <%f> <%s> \n", __FILE__, caller, __func__,
 			pPointChain->fltAbsTime,
 			pPointChain->fltXval,
 			pPointChain->fltYval,
 			pPointChain->pcMarquee
 		);
-#else
-		printf("[%s] %s:%s : <%d.%d> <%d.%d> <%d.%d> <%s> \n", __FILE__, caller, __func__,
-			pPointChain->qfltAbsTime.integer,pPointChain->qfltAbsTime.fraction,
-			pPointChain->qfltXval.integer,pPointChain->qfltXval.fraction,
-			pPointChain->qfltYval.integer,pPointChain->qfltYval.fraction,
-			pPointChain->pcMarquee
-		);
-#endif /* !defined(QUASIFLOAT) */
 #endif /* (DEBUG_DATA) */
 
 		unsigned short ushPrevXval, ushPrevYval, ushNextXval, ushNextYval;

@@ -23,30 +23,19 @@ endif
 
 ifeq ($(strip $(platform)),PC)
 	PREFIX=
-	CFLAGS=-O3 -DQUASIFLOAT -DDEBUG_DATA 
+	CFLAGS=-O3  -DDEBUG_DATA 
 	OBJS= modsim.o datastruct.o hal_x86.o
 	GRBG=*.o *~ m
 
 	EXTRA=
 else
-	ifeq ($(strip $(platform)),DRAGONBALL)
-		# Prefix for UCLIBC crosscompiler
-		PREFIX=m68k-pic-coff-
-		CFLAGS=-O3 -DUCSIMM -DQUASIFLOAT -I/opt/uClinux/m68k-pic-coff/include 
+	ifeq ($(strip $(platform)),SITARA)
+		# Prefix for Cortex-8 ARM crosscompiler 
+		PREFIX= #arm-none-linux-gnueabi-
+		CFLAGS=-O3 -DSITARA  #-DSH_FOPS
 
-		OBJS= modsim.o datastruct.o hal_m68k.o port_d.o
-		GRBG=*.o *~ *.coff m
-
-		EXTRA=cp ./m /home/ez
-	else
-		ifeq ($(strip $(platform)),SITARA)
-			# Prefix for Cortex-8 ARM crosscompiler 
-			PREFIX= #arm-none-linux-gnueabi-
-			CFLAGS=-O3 -DSITARA  #-DSH_FOPS
-
-			OBJS= modsim.o datastruct.o beagle.o hal_arm8.o
-			GRBG=*.o *~ m
-		endif
+		OBJS= modsim.o datastruct.o beagle.o hal_arm8.o
+		GRBG=*.o *~ m
 	endif
 endif
 
@@ -57,14 +46,8 @@ LD=$(PREFIX)ld
 # Excessive debug info not needed when program is ready. Spoils 'realtime' operating mode. Keep commented-out.
 # CFLAGS+=-DDEBUG_DATA
 
-# Endless curve on oscilloscope ( first two bits UP, then wait 1 ms, then DOWN, and again )
-# CFLAGS+= -DHW_PORTD_TEST
-
 # Basic diagnistocs of ADxx Converter. Endless loop, either.
 # CFLAGS+= -DHW_AD53_TEST
-
-# Slow output of processed data on UCSIMM which spoil realtime process of data being isseued
-# CFLAGS += -DFAST_UCSIMM
 
 .o: .s
 	$(CC) $(ASMFLAGS) -o $@ -c $< 
