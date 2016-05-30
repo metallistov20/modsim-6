@@ -26,17 +26,13 @@
 /* <_1_SCLK_HI_W> et al */
 #include "beagle.h"
 
-#if 0
-/* <AD5300_DATA_LEN>, <AD5300_DONTCARE_LEN> */
-#include "port_d.h"
-#else
 
-/* Length of data word at AD53xx converter */
+/* Length of data word at AD53xx converter. TODO: move away */
 #define AD5300_DATA_LEN		16
-/* Amount of bits (within data word) to be ignored while passing 8-bit data value to AD53xx converter */
+
+/* Amount of bits (within data word) to be ignored while passing 8-bit data value to AD53xx converter. TODO: move away */
 #define AD5300_DONTCARE_LEN	4
 
-#endif /* (0) */
 
 /* Longest command line ever required by this app. */
 #define MEDIUM_SIZE 1024
