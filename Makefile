@@ -18,7 +18,7 @@
 #
 
 ifeq ($(strip $(platform)),)
-$(error "Define 'platform', as one of those: 'platform=PC', 'platform=DRAGONBALL' ")
+$(error "Define 'platform', as one of those: 'platform=PC', 'platform=SITARA' ")
 endif
 
 ifeq ($(strip $(platform)),PC)
@@ -47,7 +47,7 @@ LD=$(PREFIX)ld
 # CFLAGS+=-DDEBUG_DATA
 
 # Basic diagnistocs of ADxx Converter. Endless loop, either.
-# CFLAGS+= -DHW_AD53_TEST
+ CFLAGS+= -DHW_AD53_TEST
 
 .o: .s
 	$(CC) $(ASMFLAGS) -o $@ -c $< 
