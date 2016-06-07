@@ -59,6 +59,7 @@ data1 = (data1 - 130.0 - voltoffset1/voltscale1*25) / 25 * voltscale1
 data2 = (data2 - 130.0 - voltoffset2/voltscale2*25) / 25 * voltscale2
 
 time = numpy.linspace(timeoffset - 6 * timescale, timeoffset + 6 * timescale, num=len(data1))
+#time = numpy.linspace(0, 6 * timescale, num=len(data1))
  
 if (time[-1] < 1e-3):
     time = time * 1e6

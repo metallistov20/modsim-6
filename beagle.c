@@ -40,19 +40,19 @@
 /* Command line buffer */
 char pcCmdBuffer[MEDIUM_SIZE];
 
-// TODO: explore GPIO "4", this one appears to be not working.
+
 char * GPIOs[] = {
 	 /* P9, left side */
-	 "30", "31", "48" , /*"5"*/"110", "3", "49", "117", "115", 
+	 "30", "31", "48" , "60", "50", "51", "5", "5", 
 
 	 /* P9, right side */
-	 "60", "50", "51" , "4", "2", "15", "14",  "112",
+	 "5", "5", "5" , "5", "5", "5", "5",  "5",
 
 	 /* P8, left side */ 
-	 "66", "69", "45", "23", "47", "27", "22",
+	 "5", "5", "5", "5", "5", "5", "5",
 
 	 /* P8, right side */ 
-	 "67", "68", "44", "26", "46", "65", "61" 
+	 "5", "5", "5", "5", "5", "5", "5" 
 }; /* char * GPIOs[] */
 
 /* Array of pointers to GPIO files */

@@ -30,7 +30,7 @@
 	#define _30 "30"
 	#define _31 "31"
 	#define _48 "48"
-	#define _5 "110" // toggled
+	#define _5 "5"
 	#define _3 "3"
 	#define _49 "49"
 
@@ -40,7 +40,7 @@
 	#define _60 "60"
 	#define _50 "50"
 	#define _51 "51"
-	#define _4 "4" //TODO: toggle with working GPIO
+	#define _4 "4"
 
 	/* CPE#3 */
 	#define _2 "2"
@@ -134,7 +134,7 @@ GPIOTarget SCLK_i_G[NUM_PORTS] = {_5, _50, _112, _27, _46, NULL};
 /* GPIOs connected to MOSI with 'green' wire */
 GPIOTarget MOSI_i_G[NUM_PORTS] = {_3, _51, _66, _22, _65, NULL};
 /* GPIOs connected to SYNC with 'green' wire */
-GPIOTarget SYNC_i_G[NUM_PORTS] = {_67, _4, _69, _67, _61, NULL};
+GPIOTarget SYNC_i_G[NUM_PORTS] = {_49, _4, _69, _67, _61, NULL};
 
 #else
 
