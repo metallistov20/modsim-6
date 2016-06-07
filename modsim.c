@@ -111,6 +111,7 @@ char cArg0[LARGE_BUF_SZ];
 	/* Assign program name, requirted for output*/
 	strcpy (cArg0, argv[0]);
 
+#if (0)
 	/* Parsing command line arguments */
 	while (1)
 	{
@@ -150,15 +151,27 @@ char cArg0[LARGE_BUF_SZ];
 
 	printf("[%s] %s: NOTIFICATION: assuming that CPE is attached to [%s] gate, works according to [%s] protocol.\n", __FILE__, __func__, (DO_GATE0_OP==iOperation)?"CPE#0":"CPE#1", (DO_GATE0_OP==iOperation)?"USB1.1":"USB2.0"   );
 
+
+#endif /* (0) */
+
 	/* Try to open Raw Data file at place defined by 'FILE_NAME' */
+#if (0)
 	if ( NULL == (fp = fopen (FILE_NAME, "r") ) )
+#else
+char _FILE_NAME[LARGE_BUF_SZ];
+
+	/* Assign target file name, needed for circular test runs invoked by external bash_script */
+	strcpy (_FILE_NAME, argv[1]);
+
+	if ( NULL == (fp = fopen (_FILE_NAME, "r") ) )
+#endif /* (0) */
 	{
-		printf("[%s] %s: can't open file <%s> \n", __FILE__, __func__ , FILE_NAME);
+		printf("[%s] %s: can't open file <%s> \n", __FILE__, __func__ , _FILE_NAME);
 
 		return P_ERROR;
 	}
 
-	printf("[%s] %s: loading USB-data via NFS from file <%s>\n", __FILE__, __func__, FILE_NAME);
+	printf("[%s] %s: loading USB-data from file <%s>\n", __FILE__, __func__, _FILE_NAME);
 
 	/* For each string of Raw Data file */
 	while ( ! (feof (fp) ) ) 
@@ -172,7 +185,7 @@ char cArg0[LARGE_BUF_SZ];
 		{
 		/* Aux. buffer to keep results of parsing */
 		char * cpTmp = cBuf;
-#if defined(DEBUG_DATA_)
+#if defined(DEBUG_DATA)
 			printf("[%s] %s: scanned: < %s >\n", __FILE__, __func__, cBuf);
 #endif /* (DEBUG_DATA) */
 
@@ -186,7 +199,7 @@ char cArg0[LARGE_BUF_SZ];
 				/* replace all commas with spaces, to let the <scanf()> parse it */
 				{ if (',' == *cpTmp) *cpTmp = ' '; cpTmp++; }
 
-#if defined(DEBUG_DATA_)
+#if defined(DEBUG_DATA)
 			printf("[%s] %s: changed: < %s >\n", __FILE__, __func__, cBuf);
 #endif /* (DEBUG_DATA) */
 
@@ -194,7 +207,7 @@ char cArg0[LARGE_BUF_SZ];
 			/* Find 3 floats separated by spaces in aux. buffer */
 			sscanf(cBuf, "%f %f %f,", &fltTM,     &fltDIn,   &fltDOut );
 
-#if defined(DEBUG_DATA_)
+#if defined(DEBUG_DATA)
 
 			printf("[%s] %s: parsed :  <%f> <%f> <%f>\n", __FILE__, __func__, fltTM, fltDIn, fltDOut );
 #endif /* (DEBUG_DATA) */

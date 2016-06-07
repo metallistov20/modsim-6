@@ -42,25 +42,16 @@
 #define min(x,y)	((x<y)?x:y)
 
 /* Base of  ADxx converter */
-//#define CONV_BASE	256
-
-/* Multiplier to get decimal data for ADxx converter from volatge value */
-#define CONV_MAX_SCALE 255
-
-/* MAX voltage to be emitted by converter within currennt platform */
-#define VDD_VOLTAGE 	5
+#define CONV_BASE	256
 
 /* Hundred multiplier to get decimal data for ADxx converter from volatge value */
-//#define CONV_CENTUM	100
-
-/* Hundred multiplier to get decimal data for ADxx converter from volatge value */
-//#define CONV_MULT_COEFF 255
+#define CONV_CENTUM	100
 
 /* Decimal power of fractal part */
-//#define FRACT_PWR	100000
+#define FRACT_PWR	100000
 
 /* Subraction of Decimal power and Centi */
-//#define FRACT_PWR_SB	1000
+#define FRACT_PWR_SB	1000
 
 /* Time measurement variable to define begin of time scale */
 struct timeval starttimePROC;
@@ -99,7 +90,6 @@ pTimepointType pChild, pTempPointChain;
 		if ( (*ppThisPointChain)->fltXval < 0.0) (*ppThisPointChain)->fltXval *= (-1);
 		if ( (*ppThisPointChain)->fltYval < 0.0) (*ppThisPointChain)->fltYval *= (-1);
 
-#if 0
 		/* Making unsigned short (needed fror ADxx conv'r) form float */
 		(*ppThisPointChain)->ushRawXval = (*ppThisPointChain)->fltXval * CONV_CENTUM;
 		(*ppThisPointChain)->ushRawYval = (*ppThisPointChain)->fltYval * CONV_CENTUM;
@@ -108,16 +98,6 @@ pTimepointType pChild, pTempPointChain;
 		/* Don't let the values to be higher than highest value allowed for converter */
 		(*ppThisPointChain)->ushRawXval = min(CONV_BASE, (*ppThisPointChain)->ushRawXval);
 		(*ppThisPointChain)->ushRawYval = min(CONV_BASE, (*ppThisPointChain)->ushRawYval);
-#else
-		/* 0.01 becomes 1, and placed on new scale */
-		(*ppThisPointChain)->ushRawXval = (*ppThisPointChain)->fltXval * CONV_MAX_SCALE / VDD_VOLTAGE;
-		(*ppThisPointChain)->ushRawYval = (*ppThisPointChain)->fltYval * CONV_MAX_SCALE / VDD_VOLTAGE;
-
-
-		/* Don't let the values to be higher than highest value allowed for converter */
-		(*ppThisPointChain)->ushRawXval = min(CONV_MAX_SCALE, (*ppThisPointChain)->ushRawXval);
-		(*ppThisPointChain)->ushRawYval = min(CONV_MAX_SCALE, (*ppThisPointChain)->ushRawYval);
-#endif /* (0) */
 
 		(*ppThisPointChain)->pcMarquee = calloc (1, strlen (pcMrq) +1 );
 		strcpy( (*ppThisPointChain)->pcMarquee, pcMrq);
@@ -165,29 +145,13 @@ pTimepointType pChild, pTempPointChain;
 		if ( pTempPointChain->fltXval < 0.0) pTempPointChain->fltXval *= (-1);
 		if ( pTempPointChain->fltYval < 0.0) pTempPointChain->fltYval *= (-1);
 
-
-
-
-#if 0
 		/* Making unsigned short (needed fror ADxx conv'r) form float */
 		pTempPointChain->ushRawXval = pTempPointChain->fltXval * CONV_CENTUM;
 		pTempPointChain->ushRawYval = pTempPointChain->fltYval * CONV_CENTUM;
 
-		pTempPointChain->ushRawXval = pTempPointChain->fltXval * CONV_CENTUM;
-		pTempPointChain->ushRawYval = pTempPointChain->fltYval * CONV_CENTUM;
-#else
-
-
-		/* 0.01 becomes 1, and placed on new scale */
-		pTempPointChain->ushRawXval = pTempPointChain->fltXval * CONV_MAX_SCALE / VDD_VOLTAGE;
-		pTempPointChain->ushRawYval = pTempPointChain->fltYval * CONV_MAX_SCALE / VDD_VOLTAGE;
-
-
 		/* Don't let the values to be higher than highest value allowed for converter */
-		pTempPointChain->ushRawXval = min(CONV_MAX_SCALE, pTempPointChain->ushRawXval);
-		pTempPointChain->ushRawYval = min(CONV_MAX_SCALE, pTempPointChain->ushRawYval);
-#endif /* (0) */
-
+		pTempPointChain->ushRawXval = min(CONV_BASE, pTempPointChain->ushRawXval);
+		pTempPointChain->ushRawYval = min(CONV_BASE, pTempPointChain->ushRawYval);
 
 		pTempPointChain->pcMarquee = calloc (1, strlen (pcMrq) +1 );
 		strcpy( pTempPointChain->pcMarquee, pcMrq);

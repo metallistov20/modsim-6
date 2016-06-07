@@ -214,7 +214,7 @@ int iIdx, iPdx;
 	/* Open GPIO value files and store file poniters in array <GPIO_VALUE_FILES> */
 	for (iIdx = 0; iIdx < sizeof(GPIO_VALUE_FILES)/sizeof(GPIO_VALUE_FILES[0]);iIdx++ )
 	{
-		printf("[%s] [%s] opening GPIO value file for GPIO %s \n",__FILE__, __func__ , GPIOs[iIdx] );
+//.		printf("[%s] [%s] opening GPIO value file for GPIO %s \n",__FILE__, __func__ , GPIOs[iIdx] );
 
 		/* Filename prepare */
 		sprintf (pcCmdBuffer, "/sys/class/gpio/gpio%s/value", GPIOs[iIdx]);
@@ -319,7 +319,7 @@ int iIdx;
 	/* Open GPIO value files and store file poniters in array <GPIO_VALUE_FILES> */
 	for (iIdx = 0; iIdx < sizeof(GPIO_VALUE_FILES)/sizeof(GPIO_VALUE_FILES[0]);iIdx++ )
 	{
-		printf("[%s] [%s] closing GPIO value file for GPIO %s \n",__FILE__, __func__ , GPIOs[iIdx] );
+//.		printf("[%s] [%s] closing GPIO value file for GPIO %s \n",__FILE__, __func__ , GPIOs[iIdx] );
 
 		/* Try to close value file <pcCmdBuffer> */
 		if ( 0 != fclose ( GPIO_VALUE_FILES[iIdx] ) )

@@ -35,15 +35,55 @@
 int ProcessPoint( pTimepointType pTimepoint )
 {
 // TODO: workaround. normally the data stream should distributed across all of the attached CPEs
-int iCPE = 0;
+int iCPE=0;
+
+// TODO: remove this workaround
+#define max(x,y)	((x>y)?x:y)
+// TODO: remove this workaround
+#define min(x,y)	((x<y)?x:y)
+// TODO: remove this workaround
+#define CONV_MAX_SCALE 255
+// TODO: remove this workaround
+#define VDD_VOLTAGE 	5
+
+
 
 		/* Parsing-out redundant data from CVS-datafile yet to be implemented */
 		none
+//	usleep(1000*19/7);
+	usleep((120*2*100*19/7)/105);
+
 
 		/* Put current value on 'green' wire */
-		_i_AD5300_Write_W(pTimepoint->ushQuadAvgYval /*pTimepoint->ushQuadAvgXval*/, iCPE);
+// 07.06.2016 : this line is indifferent for HW->PC
+#if 0
+#if 0
+		/* Logical zero, anyway */
+		pTimepoint->ushQuadAvgYval = max(0.012*CONV_MAX_SCALE / VDD_VOLTAGE, pTimepoint->ushQuadAvgYval);
+		pTimepoint->ushQuadAvgYval = max(0.012*CONV_MAX_SCALE / VDD_VOLTAGE, pTimepoint->ushQuadAvgYval);
+		/* Logical one, anyway */
+		pTimepoint->ushQuadAvgXval = min(0.036*CONV_MAX_SCALE / VDD_VOLTAGE, pTimepoint->ushQuadAvgXval);
+		pTimepoint->ushQuadAvgYval = min(0.036*CONV_MAX_SCALE / VDD_VOLTAGE, pTimepoint->ushQuadAvgYval);
+
+#endif /* (0) */
+		if (pTimepoint->ushQuadAvgYval > 254)pTimepoint->ushQuadAvgYval = 254;  
+		if (pTimepoint->ushQuadAvgXval > 254)pTimepoint->ushQuadAvgXval = 254;
+
+
+		_i_AD5300_Write_W(pTimepoint->ushQuadAvgYval, iCPE);
 
 		/* Put current value on 'white' wire */
-		_i_AD5300_Write_G(pTimepoint->ushQuadAvgYval, iCPE);
+		_i_AD5300_Write_G(pTimepoint->ushQuadAvgXval, iCPE);
+#else
+
+		if (pTimepoint->ushRawYval > 254)pTimepoint->ushRawYval = 254;  
+		if (pTimepoint->ushRawXval > 254)pTimepoint->ushRawXval = 254;
+
+
+		_i_AD5300_Write_W(pTimepoint->ushRawYval, iCPE);
+
+		/* Put current value on 'white' wire */
+		_i_AD5300_Write_G(pTimepoint->ushRawXval, iCPE);
+#endif /* (0) */
 
 } /* int ProcessPoint( pTimepointType pTimepoint ) */
