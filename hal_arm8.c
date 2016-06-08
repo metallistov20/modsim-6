@@ -36,6 +36,12 @@ int ProcessPoint( pTimepointType pTimepoint )
 {
 // TODO: workaround. normally the data stream should distributed across all of the attached CPEs
 int iCPE=0;
+int iJiffie;
+
+    // TODO: the <Jiffies> normally to be compyted dynamically, on-the-run. Anyway shoudl not be a constant.
+     iJiffie = 1000*19/7; // 60 secs
+    //((120*2*100*19/7)/105); // 12 secs
+
 
 // TODO: remove this workaround
 #define max(x,y)	((x>y)?x:y)
@@ -50,39 +56,32 @@ int iCPE=0;
 
 		/* Parsing-out redundant data from CVS-datafile yet to be implemented */
 		none
-//	usleep(1000*19/7);
-	usleep((120*2*100*19/7)/105);
+
+	usleep(iJiffie);
 
 
-		/* Put current value on 'green' wire */
-// 07.06.2016 : this line is indifferent for HW->PC
-#if 0
-#if 0
-		/* Logical zero, anyway */
-		pTimepoint->ushQuadAvgYval = max(0.012*CONV_MAX_SCALE / VDD_VOLTAGE, pTimepoint->ushQuadAvgYval);
-		pTimepoint->ushQuadAvgYval = max(0.012*CONV_MAX_SCALE / VDD_VOLTAGE, pTimepoint->ushQuadAvgYval);
-		/* Logical one, anyway */
-		pTimepoint->ushQuadAvgXval = min(0.036*CONV_MAX_SCALE / VDD_VOLTAGE, pTimepoint->ushQuadAvgXval);
-		pTimepoint->ushQuadAvgYval = min(0.036*CONV_MAX_SCALE / VDD_VOLTAGE, pTimepoint->ushQuadAvgYval);
-
-#endif /* (0) */
+#if 1
+		/* Normalizing data for AD53xxxx controller */
 		if (pTimepoint->ushQuadAvgYval > 254)pTimepoint->ushQuadAvgYval = 254;  
 		if (pTimepoint->ushQuadAvgXval > 254)pTimepoint->ushQuadAvgXval = 254;
 
 
-		_i_AD5300_Write_W(pTimepoint->ushQuadAvgYval, iCPE);
-
 		/* Put current value on 'white' wire */
+		_i_AD5300_Write_W(pTimepoint->ushQuadAvgYval, iCPE);
+		
+		/* Put current value on 'green' wire */
 		_i_AD5300_Write_G(pTimepoint->ushQuadAvgXval, iCPE);
 #else
+// TODO: remove; the <Raw data> are kept here for testing only
 
+		/* Normalizing data for AD53xxxx controller */
 		if (pTimepoint->ushRawYval > 254)pTimepoint->ushRawYval = 254;  
 		if (pTimepoint->ushRawXval > 254)pTimepoint->ushRawXval = 254;
 
-
+		/* Put current value on 'white' wire */
 		_i_AD5300_Write_W(pTimepoint->ushRawYval, iCPE);
 
-		/* Put current value on 'white' wire */
+		/* Put current value on 'green' wire */
 		_i_AD5300_Write_G(pTimepoint->ushRawXval, iCPE);
 #endif /* (0) */
 
