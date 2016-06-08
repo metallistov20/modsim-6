@@ -41,26 +41,11 @@
 #define max(x,y)	((x>y)?x:y)
 #define min(x,y)	((x<y)?x:y)
 
-/* Base of  ADxx converter */
-//#define CONV_BASE	256
-
 /* Multiplier to get decimal data for ADxx converter from volatge value */
 #define CONV_MAX_SCALE 255
 
 /* MAX voltage to be emitted by converter within currennt platform */
 #define VDD_VOLTAGE 	5
-
-/* Hundred multiplier to get decimal data for ADxx converter from volatge value */
-//#define CONV_CENTUM	100
-
-/* Hundred multiplier to get decimal data for ADxx converter from volatge value */
-//#define CONV_MULT_COEFF 255
-
-/* Decimal power of fractal part */
-//#define FRACT_PWR	100000
-
-/* Subraction of Decimal power and Centi */
-//#define FRACT_PWR_SB	1000
 
 /* Time measurement variable to define begin of time scale */
 struct timeval starttimePROC;
