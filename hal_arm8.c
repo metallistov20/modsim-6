@@ -37,6 +37,12 @@ int ProcessPoint( pTimepointType pTimepoint )
 // TODO: workaround. normally the data stream should distributed across all of the attached CPEs
 int iCPE=0;
 
+int iJiffie;		
+		
+	// TODO: the <Jiffies> normally to be compyted dynamically, on-the-run. Anyway shoudl not be a constant.		
+	iJiffie = 1000*19/7; // 60 secs		
+	//((120*2*100*19/7)/105); // 12 secs
+
 // TODO: remove this workaround
 #define max(x,y)	((x>y)?x:y)
 // TODO: remove this workaround
@@ -47,13 +53,10 @@ int iCPE=0;
 #define VDD_VOLTAGE 	5
 
 
-
 		/* Parsing-out redundant data from CVS-datafile yet to be implemented */
 		none
-//	usleep(1000*19/7); //  60 s
-//	usleep((25*4*2*100*19/7)/105); // 10 s
-	usleep((120*2*100*19/7)/105); // 11 s
 
+		usleep(iJiffie);
 
 		/* Put current value on 'green' wire */
 // 07.06.2016 : this line is indifferent for HW->PC
