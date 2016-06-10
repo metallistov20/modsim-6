@@ -46,7 +46,7 @@ LD=$(PREFIX)ld
 # Excessive debug info not needed when program is ready. Spoils 'realtime' operating mode. Keep commented-out.
 # CFLAGS+=-DDEBUG_DATA
 
-# Basic diagnistocs of ADxx Converter. Endless loop, either.
+# Basic diagnistocs of ADxx Converter. Endless loop
 # CFLAGS+= -DHW_AD53_TEST
 
 .o: .s
